@@ -8,7 +8,7 @@ using Kudu.Core;
 using Kudu.Core.Commands;
 using Kudu.Core.Infrastructure;
 using Kudu.Core.Tracing;
-using Newtonsoft.Json.Linq;
+using System.Web.Http.Description;
 
 namespace Kudu.Services.Commands
 {
@@ -29,15 +29,16 @@ namespace Kudu.Services.Commands
         /// <param name="input">The command line to execute</param>
         /// <returns></returns>
         [HttpPost]
-        public HttpResponseMessage ExecuteCommand(JObject input)
+        [ResponseType(typeof(CommandResult))]
+        public HttpResponseMessage ExecuteCommand(CommandInput input)
         {
             if (input == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            string command = input.Value<string>("command");
-            string workingDirectory = input.Value<string>("dir");
+            string command = input.command;
+            string workingDirectory = input.dir;
             using (_tracer.Step("Executing " + command, new Dictionary<string, string> { { "CWD", workingDirectory } }))
             {
                 try
@@ -58,4 +59,10 @@ namespace Kudu.Services.Commands
             }
         }
     }
+}
+
+public class CommandInput
+{
+    public string command { get; set; }
+    public string dir { get; set; }
 }
