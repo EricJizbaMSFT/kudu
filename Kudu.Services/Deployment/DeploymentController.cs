@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Kudu.Contracts.Infrastructure;
 using Kudu.Contracts.Settings;
 using Kudu.Contracts.SourceControl;
@@ -425,6 +426,7 @@ namespace Kudu.Services.Deployment
         /// <param name="id">id of the deployment</param>
         /// <returns></returns>
         [HttpGet]
+        [ResponseType(typeof(DeployResult))]
         public HttpResponseMessage GetResult(string id)
         {
             using (_tracer.Step("DeploymentService.GetResult"))

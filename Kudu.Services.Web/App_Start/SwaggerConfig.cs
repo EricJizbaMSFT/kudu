@@ -6,6 +6,7 @@ using Swashbuckle.Swagger;
 using System.Web.Http.Description;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -25,10 +26,28 @@ namespace Kudu.Services.Web
                         c.PrettyPrint();
                         c.OperationFilter<AddFileParamTypes>();
                         c.OperationFilter<NoReservedParam>();
+                        c.OperationFilter<AcceptedResponseFilter>();
                     })
                 .EnableSwaggerUi(c =>
                     {
                     });
+        }
+    }
+}
+
+public class AcceptedResponseFilter : IOperationFilter
+{
+    public void Apply(Operation operation, SchemaRegistry schemaRegistry, ApiDescription apiDescription)
+    {
+        if (operation.operationId == "Deployment_GetResult" || operation.operationId == "PushDeployment_ZipPushDeploy")  // controller and action name
+        {
+            var response = operation.responses.First().Value;
+            operation.responses.Add(((int)HttpStatusCode.Accepted).ToString(), response);
+            if (operation.operationId == "PushDeployment_ZipPushDeploy")
+            {
+                operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
+                operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
+            }
         }
     }
 }

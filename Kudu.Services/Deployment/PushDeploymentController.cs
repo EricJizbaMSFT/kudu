@@ -15,6 +15,7 @@ using Kudu.Core.Infrastructure;
 using Kudu.Core.SourceControl;
 using Kudu.Core.Tracing;
 using Kudu.Services.Infrastructure;
+using System.Web.Http.Description;
 
 namespace Kudu.Services.Deployment
 {
@@ -44,6 +45,8 @@ namespace Kudu.Services.Deployment
         }
 
         [HttpPost]
+        // Ideally response type is string, but autorest only supports JSON https://github.com/Azure/autorest/issues/1527
+        [ResponseType(typeof(void))]
         public async Task<HttpResponseMessage> ZipPushDeploy(
             [FromUri] bool isAsync = false,
             [FromUri] string author = null,
