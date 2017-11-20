@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 using Kudu.Contracts.Functions;
 using Kudu.Contracts.Tracing;
 using Kudu.Core;
@@ -78,6 +79,7 @@ namespace Kudu.Services.Functions
         }
 
         [HttpGet]
+        [ResponseType(typeof(IEnumerable<FunctionEnvelope>))]
         public async Task<HttpResponseMessage> List()
         {
             var tracer = _traceFactory.GetTracer();
