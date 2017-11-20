@@ -48,6 +48,10 @@ public class AcceptedResponseFilter : IOperationFilter
                 operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
                 operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
             }
+        } else if (operation.operationId == "Function_Delete")  // controller and action name
+        {
+            var response = operation.responses.First().Value;
+            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
         }
     }
 }
@@ -74,7 +78,6 @@ public class AddFileParamTypes : IOperationFilter
         }
         else if (operation.operationId.EndsWith("_PutItem"))
         {
-
             operation.consumes.Add(consumes);
             operation.parameters.Insert(0, fileParam);
         }
