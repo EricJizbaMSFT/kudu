@@ -103,6 +103,7 @@ namespace Kudu.Services.Functions
         }
 
         [HttpGet]
+        [ResponseType(typeof(string))]
         public HttpResponseMessage GetAdminToken()
         {
             var tracer = _traceFactory.GetTracer();
@@ -113,6 +114,7 @@ namespace Kudu.Services.Functions
         }
 
         [HttpGet]
+        [ResponseType(typeof(MasterKey))]
         public async Task<HttpResponseMessage> GetMasterKey()
         {
             var tracer = _traceFactory.GetTracer();
@@ -130,6 +132,7 @@ namespace Kudu.Services.Functions
         }
 
         [HttpPost]
+        [ResponseType(typeof(FunctionSecrets))]
         public async Task<HttpResponseMessage> GetSecrets(string name)
         {
             // "name".json will be created as function keys, (runtime will always have lowercase "name")
