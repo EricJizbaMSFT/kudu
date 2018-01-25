@@ -52,6 +52,10 @@ public class AcceptedResponseFilter : IOperationFilter
         {
             var response = operation.responses.First().Value;
             operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
+        } else if (operation.operationId == "Vfs_GetItem")  // controller and action name
+        {
+            var response = operation.responses.First().Value;
+            operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
         }
     }
 }
