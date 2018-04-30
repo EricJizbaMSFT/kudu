@@ -320,6 +320,7 @@ namespace Kudu.Services.Deployment
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [ResponseType(typeof(IEnumerable<DeployResult>))]
         public HttpResponseMessage GetDeployResults()
         {
             HttpResponseMessage response;
@@ -367,6 +368,7 @@ namespace Kudu.Services.Deployment
         /// <param name="id">id of the deployment</param>
         /// <returns></returns>
         [HttpGet]
+        [ResponseType(typeof(IEnumerable<LogEntry>))]
         public HttpResponseMessage GetLogEntry(string id)
         {
             using (_tracer.Step("DeploymentService.GetLogEntry"))
@@ -399,6 +401,7 @@ namespace Kudu.Services.Deployment
         /// <param name="logId">id of the log entry</param>
         /// <returns></returns>
         [HttpGet]
+        [ResponseType(typeof(IEnumerable<LogEntry>))]
         public HttpResponseMessage GetLogEntryDetails(string id, string logId)
         {
             using (_tracer.Step("DeploymentService.GetLogEntryDetails"))
