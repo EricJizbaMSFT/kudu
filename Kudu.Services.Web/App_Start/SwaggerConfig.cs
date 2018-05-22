@@ -27,6 +27,7 @@ namespace Kudu.Services.Web
                         c.OperationFilter<AddFileParamTypes>();
                         c.OperationFilter<NoReservedParam>();
                         c.OperationFilter<AcceptedResponseFilter>();
+                        c.OperationFilter<QueryParamCantBeObject>();
                     })
                 .EnableSwaggerUi(c =>
                     {
@@ -39,11 +40,11 @@ public class AcceptedResponseFilter : IOperationFilter
 {
     public void Apply(Operation operation, SchemaRegistry schemaRegistry, ApiDescription apiDescription)
     {
-        if (operation.operationId == "Deployment_GetResult" || operation.operationId == "PushDeployment_ZipPushDeploy")  // controller and action name
+        if (operation.operationId == "Deployment_GetResult" || operation.operationId.EndsWith("PushDeploy"))  // controller and action name
         {
             var response = operation.responses.First().Value;
             operation.responses.Add(((int)HttpStatusCode.Accepted).ToString(), response);
-            if (operation.operationId == "PushDeployment_ZipPushDeploy")
+            if (operation.operationId.EndsWith("PushDeploy"))
             {
                 operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
                 operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
@@ -72,16 +73,12 @@ public class AddFileParamTypes : IOperationFilter
             required = true,
             schema = new Schema
             {
-                type = "file"
+                type = "object",
+                format = "file"
             }
         };
-        var consumes = "multipart/form-data";
-        if (operation.operationId == "PushDeployment_ZipPushDeploy")  // controller and action name
-        {
-            operation.consumes.Add(consumes);
-            operation.parameters[0] = fileParam;
-        }
-        else if (operation.operationId.EndsWith("_PutItem"))
+        var consumes = "application/octet-stream";
+        if (operation.operationId.EndsWith("PushDeploy") || operation.operationId.EndsWith("_PutItem"))
         {
             operation.consumes.Add(consumes);
             operation.parameters.Insert(0, fileParam);
@@ -97,6 +94,23 @@ public class NoReservedParam : IOperationFilter
         {
             // Remove any parameters named 'arguments' because it's a reserved word in JavaScript and won't work anyways
             operation.parameters = operation.parameters.Where(p => p.name != "arguments").ToArray();
+        }
+    }
+}
+
+public class QueryParamCantBeObject : IOperationFilter
+{
+    public void Apply(Operation operation, SchemaRegistry schemaRegistry, ApiDescription apiDescription)
+    {
+        if (operation.parameters != null)
+        {
+            foreach (var p in operation.parameters)
+            {
+                if (p.@in == "query" && p.type == "object")
+                {
+                    p.type = "string";
+                }
+            }
         }
     }
 }

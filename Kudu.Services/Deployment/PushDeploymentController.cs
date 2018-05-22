@@ -90,6 +90,7 @@ namespace Kudu.Services.Deployment
         }
 
         [HttpPost]
+        [ResponseType(typeof(void))]
         public async Task<HttpResponseMessage> WarPushDeploy(
             [FromUri] bool isAsync = false,
             [FromUri] string author = null,
