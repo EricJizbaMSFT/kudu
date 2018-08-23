@@ -49,7 +49,7 @@ public class AcceptedResponseFilter : IOperationFilter
                 operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
                 operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
             }
-        } else if (operation.operationId == "Function_Delete" || operation.operationId.EndsWith("_PutItem"))  // controller and action name
+        } else if (operation.operationId == "Function_Delete")  // controller and action name
         {
             var response = operation.responses.First().Value;
             operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
@@ -58,6 +58,11 @@ public class AcceptedResponseFilter : IOperationFilter
             var response = operation.responses.First().Value;
             operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
             operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
+        } else if (operation.operationId.EndsWith("_PutItem"))
+        {
+            var response = operation.responses.First().Value;
+            operation.responses.Add(((int)HttpStatusCode.Created).ToString(), response);
+            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
         }
     }
 }
