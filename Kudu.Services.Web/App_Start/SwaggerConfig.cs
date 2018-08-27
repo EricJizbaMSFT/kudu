@@ -43,26 +43,49 @@ public class AcceptedResponseFilter : IOperationFilter
         if (operation.operationId == "Deployment_GetResult" || operation.operationId.EndsWith("PushDeploy"))  // controller and action name
         {
             var response = operation.responses.First().Value;
-            operation.responses.Add(((int)HttpStatusCode.Accepted).ToString(), response);
+            operation.responses.Add(((int)HttpStatusCode.Accepted).ToString(), new Response() {
+                schema = response.schema,
+                description = HttpStatusCode.Accepted.ToString()
+            });
             if (operation.operationId.EndsWith("PushDeploy"))
             {
                 operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
-                operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
+                operation.responses.Add(((int)HttpStatusCode.OK).ToString(), new Response()
+                {
+                    schema = response.schema,
+                    description = HttpStatusCode.OK.ToString()
+                });
             }
         } else if (operation.operationId == "Function_Delete")  // controller and action name
         {
             var response = operation.responses.First().Value;
-            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
+            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), new Response()
+            {
+                schema = response.schema,
+                description = HttpStatusCode.NoContent.ToString()
+            });
         } else if (operation.operationId.EndsWith("_GetItem"))  // controller and action name
         {
             var response = operation.responses.First().Value;
-            operation.responses.Add(((int)HttpStatusCode.OK).ToString(), response);
+            operation.responses.Add(((int)HttpStatusCode.OK).ToString(), new Response()
+            {
+                schema = response.schema,
+                description = HttpStatusCode.OK.ToString()
+            });
             operation.responses.Remove(((int)HttpStatusCode.NoContent).ToString());
         } else if (operation.operationId.EndsWith("_PutItem"))
         {
             var response = operation.responses.First().Value;
-            operation.responses.Add(((int)HttpStatusCode.Created).ToString(), response);
-            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), response);
+            operation.responses.Add(((int)HttpStatusCode.Created).ToString(), new Response()
+            {
+                schema = response.schema,
+                description = HttpStatusCode.Created.ToString()
+            });
+            operation.responses.Add(((int)HttpStatusCode.NoContent).ToString(), new Response()
+            {
+                schema = response.schema,
+                description = HttpStatusCode.NoContent.ToString()
+            });
         }
     }
 }
